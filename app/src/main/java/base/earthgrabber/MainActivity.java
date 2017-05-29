@@ -2,6 +2,7 @@ package base.earthgrabber;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -20,10 +21,7 @@ public class MainActivity extends AppCompatActivity {
     * Pull best images of the day from reddit.com/r/earthporn
     * save them somewhere, periodically
     * display them asa chosen gallery or
-
-
  */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +37,9 @@ public class MainActivity extends AppCompatActivity {
         String filePath = getFilesDir().listFiles()[0].getPath();
         Bitmap bmp = BitmapFactory.decodeFile(filePath);
         imageView.setImageBitmap(bmp);
-
+        //Alarm alarm = new Alarm();
+        //alarm.setAlarm(this);
+        startService(new Intent(this, AlarmService.class));
 
         new  ImageDownloader(this).execute();
 
