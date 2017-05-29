@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -28,17 +29,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ImageView imageView = (ImageView) findViewById(R.id.imageview);
-        //imageView = new ImageView(this);
-        //imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-        //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        //imageView.setPadding(8, 8, 8, 8);
 
-        //GridView gridview = (GridView) findViewById(R.id.gridview);
-        String filePath = getFilesDir().listFiles()[0].getPath();
-        Bitmap bmp = BitmapFactory.decodeFile(filePath);
-        imageView.setImageBitmap(bmp);
-        //Alarm alarm = new Alarm();
-        //alarm.setAlarm(this);
+        try {
+            String filePath = getFilesDir().listFiles()[0].getPath();
+            Bitmap bmp = BitmapFactory.decodeFile(filePath);
+            imageView.setImageBitmap(bmp);
+        }
+        catch(IndexOutOfBoundsException e){
+            Log.d("MAIN", "Error finding images in file");
+            Log.d("MAIN", e.getMessage());
+        }
+
         startService(new Intent(this, AlarmService.class));
 
         new  ImageDownloader(this).execute();
