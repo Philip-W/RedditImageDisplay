@@ -41,7 +41,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
         for (int i = 0; i < count; i++) {
             // Get the file path and load the bitmap
-            String filePath = context.getFilesDir().listFiles()[2].getPath();
+            String filePath = context.getFilesDir().listFiles()[imageCycle].getPath();
             Bitmap bitmap = getScaledBitmapFromFile(filePath, displayWidth, displayHeight);
 
 
@@ -53,7 +53,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
             //Finally notify the manager to update the widget
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
-            //imageCycle = (imageCycle + 1) % context.getFilesDir().list().length;
+            imageCycle = (imageCycle + 1) % context.getFilesDir().list().length;
         }
     }
 
