@@ -27,107 +27,50 @@ import java.io.IOException;
 
 public class WidgetProvider extends AppWidgetProvider {
 
+    static int imageCycle = 0;
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds){
         final int count = appWidgetIds.length;
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
 
-        //Load into 300x 120dp
-        Log.d("Widget", "Loading Widdget...");
+        int displayWidth = (int) (250 * scale + 0.5f);
+        int displayHeight = (int) (110 * scale + 0.5f);
+
+        // Widget size currently set to 250 x 110dp
 
         for (int i = 0; i < count; i++) {
-            final float scale = Resources.getSystem().getDisplayMetrics().density;
+            String filePath = context.getFilesDir().listFiles()[2].getPath();
 
-            int displayWidth = (int) (250 * scale + 0.5f);
-            int displayHeight = (int) (110 * scale + 0.5f);
 
-            Log.d("Widget", "Scaling: " + displayHeight +" | " + displayWidth);
+            Bitmap bitmap = getScaledBitmapFromFile(filePath, displayWidth, displayHeight);
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
 
-            String filePath = context.getFilesDir().listFiles()[5].getPath();
-            BitmapFactory.decodeFile(filePath, options);
-
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
-            String imageType = options.outMimeType;
-            Log.d("Widget", "Image Size: " + imageHeight + " | " + imageWidth);
-
-            Log.d("Widget", "Options Loaded");
             int widgetId = appWidgetIds[i];
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                     R.layout.widget_main);
 
-            // Calculate inSampleSize
-            options.inSampleSize = calculateInSampleSize(options, displayWidth, displayHeight);
-
-            Log.d("Widget", "Widget size calculated");
-            options.inJustDecodeBounds = false;
-            Bitmap bMap = BitmapFactory.decodeFile(filePath, options);
-
-            //Bitmap pq = Bitmap.createScaledBitmap(bMap, displayWidth, displayHeight, true);
-
-            //bMap = resizeBitmapFitXY(displayWidth, displayHeight, bMap);
-
-            remoteViews.setImageViewBitmap(R.id.imageView, bMap);
+            remoteViews.setImageViewBitmap(R.id.imageView, bitmap);
 
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
-            AppWidgetManager.getInstance(context).updateAppWidget(widgetId, remoteViews);
-
+            //imageCycle = (imageCycle + 1) % context.getFilesDir().list().length;
         }
     }
 
+    public static Bitmap getScaledBitmapFromFile(String filePath, int reqWidth, int reqHeight){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
 
-    private static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {
-        if (maxHeight > 0 && maxWidth > 0) {
-            int width = image.getWidth();
-            int height = image.getHeight();
-            float ratioBitmap = (float) width / (float) height;
-            float ratioMax = (float) maxWidth / (float) maxHeight;
+        BitmapFactory.decodeFile(filePath, options);
 
-            int finalWidth = maxWidth;
-            int finalHeight = maxHeight;
-            if (ratioMax > 1) {
-                finalWidth = (int) ((float)maxHeight * ratioBitmap);
-            } else {
-                finalHeight = (int) ((float)maxWidth / ratioBitmap);
-            }
-            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
-            return image;
-        } else {
-            return image;
-        }
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        options.inJustDecodeBounds = false;
+        Bitmap bMap = BitmapFactory.decodeFile(filePath, options);
+
+        return bMap;
     }
-
-    public Bitmap resizeBitmapFitXY(int width, int height, Bitmap bitmap){
-        Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        float originalWidth = bitmap.getWidth(), originalHeight = bitmap.getHeight();
-        Canvas canvas = new Canvas(background);
-        float scale, xTranslation = 0.0f, yTranslation = 0.0f;
-        if (originalWidth > originalHeight) {
-            scale = height/originalHeight;
-            xTranslation = (width - originalWidth * scale)/2.0f;
-        }
-        else {
-            scale = width / originalWidth;
-            yTranslation = (height - originalHeight * scale)/2.0f;
-        }
-        Matrix transformation = new Matrix();
-        transformation.setRectToRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()),
-                new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
-        //transformation.postTranslate(xTranslation, yTranslation);
-        //transformation.preScale(scale, scale);
-
-
-        Paint paint = new Paint();
-        paint.setFilterBitmap(true);
-        canvas.drawBitmap(bitmap, transformation, paint);
-        Log.d("Widget", "Bitmap Size: " + background.getHeight() + " | " + background.getWidth());
-
-        return background;
-    }
-
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
