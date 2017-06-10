@@ -10,6 +10,10 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 /**
  * Created by Philip on 30/05/2017.
  */
@@ -25,6 +29,8 @@ public class WidgetProvider extends AppWidgetProvider {
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                     R.layout.widget_main);
+
+
             //remoteViews.setTextViewText(R.id.textView, number);
 
             try {
@@ -46,4 +52,38 @@ public class WidgetProvider extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }
+
+/*
+    private Bitmap decodeFile(File f){
+        Bitmap b = null;
+
+        //Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            BitmapFactory.decodeStream(fis, null, o);
+            fis.close();
+
+            int scale = 1;
+            if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
+                scale = (int) Math.pow(2, (int) Math.ceil(Math.log(IMAGE_MAX_SIZE /
+                        (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+            }
+
+            //Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            fis = new FileInputStream(f);
+            b = BitmapFactory.decodeStream(fis, null, o2);
+            fis.close();
+        }
+        catch (IOException e){
+            Log.d("FILE", "Error loading file in decode file")
+
+        }
+
+        return b;
+    }
+*/
 }
