@@ -10,7 +10,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 
@@ -32,16 +35,17 @@ public class WidgetProvider extends AppWidgetProvider {
         Log.d("Widget", "Loading Widdget...");
 
         for (int i = 0; i < count; i++) {
-            final float scale = context.getResources().getDisplayMetrics().density;
-            int displayWidth = (int) (300 * scale + 0.5f);
-            int displayHeight = (int) (120 * scale + 0.5f);
+            final float scale = Resources.getSystem().getDisplayMetrics().density;
+
+            int displayWidth = (int) (250 * scale + 0.5f);
+            int displayHeight = (int) (110 * scale + 0.5f);
 
             Log.d("Widget", "Scaling: " + displayHeight +" | " + displayWidth);
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
 
-            String filePath = context.getFilesDir().listFiles()[0].getPath();
+            String filePath = context.getFilesDir().listFiles()[5].getPath();
             BitmapFactory.decodeFile(filePath, options);
 
             int imageHeight = options.outHeight;
@@ -49,13 +53,11 @@ public class WidgetProvider extends AppWidgetProvider {
             String imageType = options.outMimeType;
             Log.d("Widget", "Image Size: " + imageHeight + " | " + imageWidth);
 
-
             Log.d("Widget", "Options Loaded");
             int widgetId = appWidgetIds[i];
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                     R.layout.widget_main);
-
 
             // Calculate inSampleSize
             options.inSampleSize = calculateInSampleSize(options, displayWidth, displayHeight);
@@ -63,52 +65,67 @@ public class WidgetProvider extends AppWidgetProvider {
             Log.d("Widget", "Widget size calculated");
             options.inJustDecodeBounds = false;
             Bitmap bMap = BitmapFactory.decodeFile(filePath, options);
-            Log.d("Widget", "Height: " + bMap.getHeight());
-                // Decode bitmap with inSampleSize set
 
-                //remoteViews.setBitmap(R.id.imageView, "setImageBitmap", bMap);
+            //Bitmap pq = Bitmap.createScaledBitmap(bMap, displayWidth, displayHeight, true);
+
+            //bMap = resizeBitmapFitXY(displayWidth, displayHeight, bMap);
+
             remoteViews.setImageViewBitmap(R.id.imageView, bMap);
-            Log.d("Widget", "Bitmapset");
 
-            //Intent intent = new Intent(context, WidgetProvider.class);
-            //intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            //intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-            //PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-            //        0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            //remoteViews.setOnClickPendingIntent(R.id.actionButton, pendingIntent);
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
-
-           // Canvas c = new Canvas(bMap);
-            //c.drawBitmap(bMap, new Matrix(), null);
-            //remoteViews.setImageViewBitmap(R.id.imageView, bMap);
-
-
             AppWidgetManager.getInstance(context).updateAppWidget(widgetId, remoteViews);
-            //appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.imageView);
-            Log.d("Widget", "Intent Loaded");
 
-
-            //remoteViews.setTextViewText(R.id.textView, number);
-            /*
-            try {
-                String filePath = context.getFilesDir().listFiles()[0].getPath();
-                Bitmap bmp = BitmapFactory.decodeFile(filePath);
-                remoteViews.setBitmap(R.id.imageView, "", bmp);
-            } catch (IndexOutOfBoundsException e) {
-                Log.d("MAIN", "Error finding images in file");
-                Log.d("MAIN", e.getMessage());
-            }
-
-
-            Intent intent = new Intent(context, WidgetProvider.class);
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            //remoteViews.setOnClickPendingIntent(R.id.actionButton, pendingIntent);
-            appWidgetManager.updateAppWidget(widgetId, remoteViews);
-            */
         }
+    }
+
+
+    private static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {
+        if (maxHeight > 0 && maxWidth > 0) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+            float ratioBitmap = (float) width / (float) height;
+            float ratioMax = (float) maxWidth / (float) maxHeight;
+
+            int finalWidth = maxWidth;
+            int finalHeight = maxHeight;
+            if (ratioMax > 1) {
+                finalWidth = (int) ((float)maxHeight * ratioBitmap);
+            } else {
+                finalHeight = (int) ((float)maxWidth / ratioBitmap);
+            }
+            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
+            return image;
+        } else {
+            return image;
+        }
+    }
+
+    public Bitmap resizeBitmapFitXY(int width, int height, Bitmap bitmap){
+        Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        float originalWidth = bitmap.getWidth(), originalHeight = bitmap.getHeight();
+        Canvas canvas = new Canvas(background);
+        float scale, xTranslation = 0.0f, yTranslation = 0.0f;
+        if (originalWidth > originalHeight) {
+            scale = height/originalHeight;
+            xTranslation = (width - originalWidth * scale)/2.0f;
+        }
+        else {
+            scale = width / originalWidth;
+            yTranslation = (height - originalHeight * scale)/2.0f;
+        }
+        Matrix transformation = new Matrix();
+        transformation.setRectToRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()),
+                new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
+        //transformation.postTranslate(xTranslation, yTranslation);
+        //transformation.preScale(scale, scale);
+
+
+        Paint paint = new Paint();
+        paint.setFilterBitmap(true);
+        canvas.drawBitmap(bitmap, transformation, paint);
+        Log.d("Widget", "Bitmap Size: " + background.getHeight() + " | " + background.getWidth());
+
+        return background;
     }
 
 
