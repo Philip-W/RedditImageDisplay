@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
  The Idea:
     * Pull best images of the day from reddit.com/r/earthporn
     * save them somewhere, periodically
-    * display them asa chosen gallery or
+    * display them as a chosen gallery or
  */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        startService(new Intent(this, AlarmService.class));
+        //startService(new Intent(this, AlarmService.class));
 
-        new  ImageDownloader(this).execute();
+        //new  ImageDownloader(this).execute();
 
     }
 }
