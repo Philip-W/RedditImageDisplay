@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import java.io.File;
 
+import base.earthgrabber.ImageHandler.BitmapLoader;
+
 import static base.earthgrabber.WidgetProvider.imageCycle;
 
 /**
@@ -28,8 +30,8 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return 3;
-        //return files.length;
+        //return 3;
+        return files.length;
     }
 
     public Object getItem(int position) {
@@ -47,14 +49,16 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(250, 250));
+            imageView.setLayoutParams(new GridView.LayoutParams(500, 210));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setPadding(8, 8, 8, 8);
         } else {
             imageView = (ImageView) convertView;
         }
 
-        Bitmap bMap = BitmapFactory.decodeFile(files[position].getPath());
+        Bitmap bMap = BitmapLoader.getScaledBitmapFromFile(files[position].getPath(),
+                500, 210
+                );
         imageView.setImageBitmap(bMap);
         return imageView;
     }
