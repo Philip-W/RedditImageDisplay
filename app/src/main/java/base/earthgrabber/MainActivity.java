@@ -56,9 +56,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //startService(new Intent(this, AlarmService.class));
-
-        //new  ImageDownloader(this).execute();
+        startService(new Intent(this, AlarmService.class));
+        new  ImageDownloader(this).execute();
 
     }
 }
