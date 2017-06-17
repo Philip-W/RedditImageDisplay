@@ -4,22 +4,9 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.util.Log;
-import android.util.TypedValue;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 import base.earthgrabber.ImageHandler.BitmapLoader;
 
