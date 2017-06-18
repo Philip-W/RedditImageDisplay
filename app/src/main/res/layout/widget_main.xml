@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
     android:background="#55000000"
+    android:clickable="true"
     >
 
     <ImageView
@@ -12,6 +13,5 @@
         android:layout_height="match_parent"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
-
         />
 </LinearLayout>

@@ -3,9 +3,13 @@ package base.earthgrabber;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import base.earthgrabber.ImageHandler.BitmapLoader;
@@ -16,7 +20,10 @@ import base.earthgrabber.ImageHandler.BitmapLoader;
 
 public class WidgetProvider extends AppWidgetProvider {
 
+
+    private static final String SYNC_CLICKED    = "base.earthgrabber.WidgetClick";
     static int imageCycle = 0;
+
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds){
@@ -40,9 +47,29 @@ public class WidgetProvider extends AppWidgetProvider {
                     R.layout.widget_main);
             remoteViews.setImageViewBitmap(R.id.imageView, bitmap);
 
+
+            Intent clickIntent = new Intent(context, WidgetProvider.class);
+            clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, widgetId, clickIntent, 0);
+            remoteViews.setOnClickPendingIntent(R.id.imageView, pendingIntent);
+
             //Finally notify the manager to update the widget
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
             imageCycle = (imageCycle + 1) % context.getFilesDir().list().length;
+        }
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (intent.getAction()==null) {
+            Bundle extras = intent.getExtras();
+            if(extras!=null) {
+                int widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+                Log.d("Widget", "pressed");
+            }
+        }
+        else {
+            super.onReceive(context, intent);
         }
     }
 
