@@ -65,7 +65,21 @@ public class WidgetProvider extends AppWidgetProvider {
             Bundle extras = intent.getExtras();
             if(extras!=null) {
                 int widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-                Log.d("Widget", "pressed");
+                final float scale = Resources.getSystem().getDisplayMetrics().density;
+                BitmapLoader bmLoader= new BitmapLoader();
+
+                int displayWidth = (int) (250 * scale + 0.5f);
+                int displayHeight = (int) (110 * scale + 0.5f);
+
+                String filePath = context.getFilesDir().listFiles()[imageCycle].getPath();
+                Bitmap bitmap = bmLoader.getScaledBitmapFromFile(filePath, displayWidth, displayHeight);
+
+                RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                        R.layout.widget_main);
+                remoteViews.setImageViewBitmap(R.id.imageView, bitmap);
+                AppWidgetManager.getInstance(context).updateAppWidget(widgetId, remoteViews);
+                imageCycle = (imageCycle + 1) % context.getFilesDir().list().length;
+
             }
         }
         else {
