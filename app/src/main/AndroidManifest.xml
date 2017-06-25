@@ -25,7 +25,7 @@
             android:exported="false"/>
 
 
-        <receiver android:name=".Alarm" android:enabled="true"/>
+        <receiver android:name=".ImageDownloadAlarm" android:enabled="true"/>
 
 
         <receiver android:name=".WidgetProvider" >

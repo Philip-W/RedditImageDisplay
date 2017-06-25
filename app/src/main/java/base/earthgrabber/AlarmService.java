@@ -10,24 +10,24 @@ import android.os.IBinder;
 
 public class AlarmService extends Service {
 
-    Alarm alarm = new Alarm();
+    ImageDownloadAlarm imageDownloadAlarm = new ImageDownloadAlarm();
     public void onCreate()
     {
-        alarm.setAlarm(this);
+        imageDownloadAlarm.setAlarm(this);
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        alarm.setAlarm(this);
+        imageDownloadAlarm.setAlarm(this);
         return START_STICKY;
     }
 
     @Override
     public void onStart(Intent intent, int startId)
     {
-        alarm.setAlarm(this);
+        imageDownloadAlarm.setAlarm(this);
     }
 
     @Override
