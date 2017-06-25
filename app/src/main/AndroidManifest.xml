@@ -35,6 +35,9 @@
             <intent-filter>
                 <action android:name="base.earthgrabber.WidgetClick"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="AUTO_UPDATE" />
+            </intent-filter>
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/main_widget_info"
                 />

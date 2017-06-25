@@ -24,11 +24,13 @@ public class WidgetProvider extends AppWidgetProvider {
 
 
     private static final String SYNC_CLICKED    = "base.earthgrabber.WidgetClick";
-    int imageCycle;
+    public static final String ACTION_AUTO_UPDATE = "AUTO_UPDATE";
 
+    int imageCycle;
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds){
+        Log.d("Widget", "onUpdate");
         final int count = appWidgetIds.length;
         final float scale = Resources.getSystem().getDisplayMetrics().density;
         BitmapLoader bmLoader= new BitmapLoader();
@@ -41,7 +43,7 @@ public class WidgetProvider extends AppWidgetProvider {
         for (int i = 0; i < count; i++) {
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            imageCycle = preferences.getInt("Name", 0);
+            imageCycle = preferences.getInt("imageCycle", 0);
 
             // Get the file path and load the bitmap
             String filePath = context.getFilesDir().listFiles()[imageCycle].getPath();
@@ -98,6 +100,15 @@ public class WidgetProvider extends AppWidgetProvider {
 
             }
         }
+        else if(intent.getAction().equals(ACTION_AUTO_UPDATE))
+        {
+            Log.d("Widget", "AutoUpdate");
+            ComponentName name = new ComponentName(context, WidgetProvider.class);
+            int [] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(name);
+            Log.d("Widget", "" + ids.length);
+            onUpdate(context, AppWidgetManager.getInstance(context), ids);
+        }
+
         else {
             super.onReceive(context, intent);
         }

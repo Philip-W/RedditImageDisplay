@@ -13,7 +13,7 @@ import java.io.File;
 
 import base.earthgrabber.ImageHandler.BitmapLoader;
 
-import static base.earthgrabber.WidgetProvider.imageCycle;
+//import static base.earthgrabber.WidgetProvider.imageCycle;
 
 /**
  * Created by Philip on 11/06/2017.

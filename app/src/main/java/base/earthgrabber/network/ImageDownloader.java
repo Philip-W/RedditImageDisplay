@@ -22,19 +22,22 @@ import java.util.Arrays;
 
 /**
  * Created by Philip on 24/05/2017.
+ * Class to handle image downloading and saving
+ *
  */
-
-public class ImageDownloader  extends AsyncTask{
+public class ImageDownloader extends AsyncTask{
 
     private Context context;
     public ImageDownloader(Context ctx){
             context = ctx;
     }
 
-
     /*
      * As I want all image collection to be done away from the ui errors will not be
      * thrown to the above thread and instead will be controlled inside this thread
+     */
+    /**
+     * @param list
      */
     private void saveImages(ArrayList<String> list){
         int image_count = 0;
@@ -72,9 +75,6 @@ public class ImageDownloader  extends AsyncTask{
         for(File images : f.listFiles()){
             Log.d("IMG", images.getName());
         }
-
-
-
     }
 
     @Override
@@ -111,7 +111,6 @@ public class ImageDownloader  extends AsyncTask{
         if (!imageURLs.isEmpty()){
             saveImages(imageURLs);
         }
-
         return true;
     }
 }

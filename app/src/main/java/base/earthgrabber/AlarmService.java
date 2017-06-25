@@ -11,9 +11,12 @@ import android.os.IBinder;
 public class AlarmService extends Service {
 
     ImageDownloadAlarm imageDownloadAlarm = new ImageDownloadAlarm();
+    WidgetUpdateAlarm widgetUpdateAlarm = new WidgetUpdateAlarm();
+
     public void onCreate()
     {
         imageDownloadAlarm.setAlarm(this);
+        widgetUpdateAlarm.setAlarm(this);
         super.onCreate();
     }
 
@@ -21,13 +24,8 @@ public class AlarmService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         imageDownloadAlarm.setAlarm(this);
+        widgetUpdateAlarm.setAlarm(this);
         return START_STICKY;
-    }
-
-    @Override
-    public void onStart(Intent intent, int startId)
-    {
-        imageDownloadAlarm.setAlarm(this);
     }
 
     @Override
